@@ -1,18 +1,18 @@
 import py
 import os.path
-from openscad_utils import *
+from .openscad_utils import *
 
 
 temppath = py.test.ensuretemp('MCAD')
 
 def pytest_generate_tests(metafunc):
     if "modpath" in metafunc.funcargnames:
-        for fpath, modnames in collect_test_modules().items():
+        for fpath, modnames in list(collect_test_modules().items()):
             basename = os.path.splitext(os.path.split(str(fpath))[1])[0]
             #os.system("cp %s %s/" % (fpath, temppath))
             if "modname" in metafunc.funcargnames:
                 for modname in modnames:
-                    print modname
+                    print(modname)
                     metafunc.addcall(id=basename+"/"+modname, funcargs=dict(modname=modname, modpath=fpath))
             else:
                 metafunc.addcall(id=os.path.split(str(fpath))[1], funcargs=dict(modpath=fpath))
@@ -29,11 +29,11 @@ use <%s>
 
 %s();
 """ % (modpath, modname)
-    print code
+    print(code)
     f.write(code)
     f.flush()
     output = call_openscad(path=fpath, stlpath=stlpath, timeout=15)
-    print output
+    print(output)
     assert output[0] is 0
     for s in ("warning", "error"):
         assert s not in output[2].strip().lower()
@@ -42,7 +42,7 @@ use <%s>
 def test_file_compile(modpath):
     stlpath = temppath.join(modpath.basename + "-test.stl")
     output = call_openscad(path=modpath, stlpath=stlpath)
-    print output
+    print(output)
     assert output[0] is 0
     for s in ("warning", "error"):
         assert s not in output[2].strip().lower()

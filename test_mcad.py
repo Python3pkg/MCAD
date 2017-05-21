@@ -1,1 +1,1 @@
-from openscad_testing import *
+from .openscad_testing import *
